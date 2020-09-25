@@ -140,45 +140,45 @@ matrix:
   include:
 
     #https://cri-o.io
-    - name: "kubernetes with crio runtime Python 3.7 on bionic amd64"
-      dist: bionic
-      addons:
-           snaps:
-             - name: minikube
-               confinement: strict
-               channel: stable
-      language: python
-      python: 3.7
-      before_install:
-        - pip3 install virtualenv
-        - virtualenv -p $(which python3) ~venvpy3
-        - source ~venvpy3/bin/activate
-      <<: *fleet_install_tasks
-      <<: *fleet_script_tasks
-      <<: *fleet_crio_tasks
-      after_success:
-        - deactivate
+    # - name: "kubernetes with crio runtime Python 3.7 on bionic amd64"
+    #   dist: bionic
+    #   addons:
+    #        snaps:
+    #          - name: minikube
+    #            confinement: strict
+    #            channel: stable
+    #   language: python
+    #   python: 3.7
+    #   before_install:
+    #     - pip3 install virtualenv
+    #     - virtualenv -p $(which python3) ~venvpy3
+    #     - source ~venvpy3/bin/activate
+    #   <<: *fleet_install_tasks
+    #   <<: *fleet_script_tasks
+    #   <<: *fleet_crio_tasks
+    #   after_success:
+    #     - deactivate
 
 
     #https://containerd.io/docs/getting-started/#starting-containerd
-    - name: "kubernetes with containerd runtime Python 3.7 on bionic amd64"
-      dist: bionic
-      addons:
-           snaps:
-             - name: minikube
-               confinement: strict
-               channel: stable
-      language: python
-      python: 3.7
-      before_install:
-        - pip3 install virtualenv
-        - virtualenv -p $(which python3) ~venvpy3
-        - source ~venvpy3/bin/activate
-      <<: *fleet_install_tasks
-      <<: *fleet_script_tasks
-      <<: *fleet_containerd_tasks
-      after_success:
-        - deactivate
+    # - name: "kubernetes with containerd runtime Python 3.7 on bionic amd64"
+    #   dist: bionic
+    #   addons:
+    #        snaps:
+    #          - name: minikube
+    #            confinement: strict
+    #            channel: stable
+    #   language: python
+    #   python: 3.7
+    #   before_install:
+    #     - pip3 install virtualenv
+    #     - virtualenv -p $(which python3) ~venvpy3
+    #     - source ~venvpy3/bin/activate
+    #   <<: *fleet_install_tasks
+    #   <<: *fleet_script_tasks
+    #   <<: *fleet_containerd_tasks
+    #   after_success:
+    #     - deactivate
 
     #https://github.com/kubernetes/frakti
     - name: "kubernetes with frakti runtime Python 3.7 on bionic amd64"
