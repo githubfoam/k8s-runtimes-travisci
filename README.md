@@ -7,6 +7,9 @@ Travis (.com) branch:
 Travis (.com) frakti branch:
 [![Build Status](https://travis-ci.com/githubfoam/k8s-runtimes-travisci.svg?branch=feature_frakti)](https://travis-ci.com/githubfoam/k8s-runtimes-travisci)  
 
+Travis (.com) crio branch:
+[![Build Status](https://travis-ci.com/githubfoam/k8s-runtimes-travisci.svg?branch=feature_frakti)](https://travis-ci.com/githubfoam/k8s-runtimes-travisci) 
+
 ~~~~
 containerd
 crio
