@@ -23,7 +23,7 @@ fleet_containerd_tasks : &fleet_containerd_tasks
         # - unzip v1.3.4.zip
         - unzip v$CONTAINERDVERSION.zip
         - ls -lai containerd-$CONTAINERDVERSION
-        - ls -lai /etc/containerd/
+        # - ls -lai /etc/containerd/
         # - echo $(/etc/containerd/config.toml)  
         # - sudo cp containerd-$CONTAINERDVERSION/containerd.service /etc/systemd/system/containerd.service
         # - sudo chmod 644 /etc/systemd/system/containerd.service
