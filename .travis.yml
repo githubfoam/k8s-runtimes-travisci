@@ -1,0 +1,117 @@
+---
+sudo: required
+dist: bionic
+notifications:
+  slack:
+    on_failure: always
+
+fleet_script_tasks : &fleet_script_tasks
+      script:
+        - python --version
+fleet_install_tasks : &fleet_install_tasks
+      install:
+        - pip install -r requirements.txt
+fleet_frakti_tasks : &fleet_frakti_tasks
+      install:
+        - echo $GOPATH
+        #Build frakti
+        - git clone https://github.com/kubernetes/frakti.git $GOPATH/src/k8s.io/frakti
+        - cd $GOPATH/src/k8s.io/frakti
+        - go version
+        # - sudo make && sudo make install
+        # #Install docker and hyperd
+        # - sudo apt-get install qemu libvirt0 docker.io -qqy
+        # - sudo sh -c "curl -sSL https://hypercontainer.io/install | bash"
+        # #Configure hyperd with gRPC endpoint 127.0.0.1:22318
+        # - |
+        #   cat >/etc/hyper/config <<EOF
+        #   # Boot kernel
+        #   Kernel=/var/lib/hyper/kernel
+        #   # Boot initrd
+        #   Initrd=/var/lib/hyper/hyper-initrd.img
+        #   # Storage driver for hyperd, valid value includes devicemapper, overlay, and aufs
+        #   StorageDriver=overlay
+        #   # Hypervisor to run containers and pods, valid values are: libvirt, qemu, kvm, xen
+        #   Hypervisor=qemu
+        #   # The tcp endpoint of gRPC API
+        #   gRPCHost=127.0.0.1:22318
+        #   EOF
+        # - sudo systemctl restart hyperd
+        # #Setup CNI networking using bridge plugin
+        # - sudo mkdir -p /etc/cni/net.d  /opt/cni/bin
+        # - git clone https://github.com/containernetworking/plugins $GOPATH/src/github.com/containernetworking/plugins
+        # - cd $GOPATH/src/github.com/containernetworking/plugins
+        # - source ./build.sh
+        # - sudo cp bin/* /opt/cni/bin/
+        # - |
+        #   sudo sh -c 'cat >/etc/cni/net.d/10-mynet.conflist <<-EOF
+        #   {
+        #       "cniVersion": "0.3.1",
+        #       "name": "mynet",
+        #       "plugins": [
+        #           {
+        #               "type": "bridge",
+        #               "bridge": "cni0",
+        #               "isGateway": true,
+        #               "ipMasq": true,
+        #               "ipam": {
+        #                   "type": "host-local",
+        #                   "subnet": "10.30.0.0/16",
+        #                   "routes": [
+        #                       { "dst": "0.0.0.0/0"   }
+        #                   ]
+        #               }
+        #           },
+        #           {
+        #               "type": "portmap",
+        #               "capabilities": {"portMappings": true},
+        #               "snat": true
+        #           }
+        #       ]
+        #   }
+        #   EOF'
+        # - |
+        #   sudo sh -c 'cat >/etc/cni/net.d/99-loopback.conf <<-EOF
+        #   {
+        #       "cniVersion": "0.3.1",
+        #       "type": "loopback"
+        #   }
+        #   EOF'
+        # - frakti --v=3 --logtostderr --listen=/var/run/frakti.sock --hyper-endpoint=127.0.0.1:22318 &  #start frakti
+        # #start kubernetes with frakti runtime
+        # - cd $GOPATH/src/k8s.io/kubernetes
+        # - hack/install-etcd.sh
+        # - export PATH=$GOPATH/src/k8s.io/kubernetes/third_party/etcd:${PATH}
+        # - export KUBERNETES_PROVIDER=local
+        # - export CONTAINER_RUNTIME=remote
+        # - export CONTAINER_RUNTIME_ENDPOINT=/var/run/frakti.sock
+        # - source hack/local-up-cluster.sh &
+        #start using the cluster, open up another terminal and run
+        # - cd $GOPATH/src/k8s.io/kubernetes
+        # - export KUBECONFIG=/var/run/kubernetes/admin.kubeconfig
+        # - cluster/kubectl.sh
+matrix:
+  fast_finish: true
+  include:
+
+    #https://github.com/kubernetes/frakti
+    - name: "kubernetes with frakti runtime Python 3.7 on bionic amd64"
+      dist: bionic
+      env:
+        - FORCE_ROOTLESS_INSTALL=1
+      addons:
+           snaps:
+             - name: minikube
+               confinement: strict
+               channel: stable
+      language: python
+      python: 3.7
+      before_install:
+        - pip3 install virtualenv
+        - virtualenv -p $(which python3) ~venvpy3
+        - source ~venvpy3/bin/activate
+      <<: *fleet_install_tasks
+      <<: *fleet_script_tasks
+      <<: *fleet_frakti_tasks
+      after_success:
+        - deactivate
